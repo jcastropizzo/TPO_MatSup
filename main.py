@@ -1,3 +1,3 @@
-import UI
+from UI import start
 
-UI.start()
+start()
