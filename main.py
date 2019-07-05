@@ -1,3 +1,3 @@
-from UI import start
+from UI.MainMenu import start
 
 start()
