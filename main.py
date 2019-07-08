@@ -1,6 +1,7 @@
-from UI.MainMenu import start
+import UI.MainMenu as menu
 
 
 
 if __name__ == "__main__":
-    start()
+    # menu.start()
+    menu.init()
