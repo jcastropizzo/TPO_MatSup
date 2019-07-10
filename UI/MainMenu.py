@@ -100,6 +100,7 @@ class CalcPanel(wx.Panel):
         if solution:
             self.solution.SetValue(solution)
             self.running_total.SetLabel('')
+            graph.graphicate(to_z(solution))
 
 
 class CalcFrame(wx.Frame):

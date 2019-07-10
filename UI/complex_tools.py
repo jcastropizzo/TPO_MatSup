@@ -1,7 +1,7 @@
 import math
 import re
 import cmath
-
+import constants
 
 def complex_eval(expression):
     print expression
@@ -9,14 +9,14 @@ def complex_eval(expression):
     expression = expression.replace("^", "**")
 
 
-    for bincomplex in re.findall("(\((-|).*,(-|).*\))", expression):
+    for bincomplex in re.findall(constants.get("REGEX_BINOM"), expression):
         print bincomplex
         bincomplex = bincomplex[0]
         bincomplex_list = bincomplex.strip("(").strip(")").split(",")
         
         expression = expression.replace(bincomplex, "({}+{}j)".format(bincomplex_list[0],bincomplex_list[1] ))
 
-    for polcomplex in re.findall("(\[(-|).*;(-|).*\])", expression):
+    for polcomplex in re.findall(constants.get("REGEX_POLAR"), expression):
         print polcomplex
         polcomplex = polcomplex[0]
         polcomplex_list = polcomplex.strip("[").strip("]").split(";")
@@ -34,23 +34,47 @@ def to_binomic(z):
 def to_polar(z):
     print z
     z = cmath.polar(z)
-    return "[{};{}]".format(str(z[0]), str(z[1]) )
+    return "[{};{}]".format(str(z[0]), str(z[1]))
+
+def to_z(expression):
+    if is_binom(expression):
+        expression_list = expression.strip("(").strip(")").split(",")
+        return complex(float(expression_list[0]),float(expression_list[1] ))
+
+    if is_polar(expression):
+        expression_list = expression.strip("[").strip("]").split(";")
+        real = math.cos(float(expression_list[1])) * float(expression_list[0])
+        imag = math.sin(float(expression_list[1])) * float(expression_list[0]) 
+        return complex(real,imag)
+        
+    return expression
+         
 
 def toggle(expression):
-    if re.match("(\((-|).*,(-|).*\))", expression) and len(re.match("(\((-|).*,(-|).*\))", expression).group(0)) == len(expression):
+    if is_binom(expression) and is_binom(expression) == len(expression):
         print expression
         expression_list = expression.strip("(").strip(")").split(",")
         z = complex(float(expression_list[0]),float(expression_list[1] ))
         return to_polar(z)
 
-    if re.match("(\[(-|).*;(-|).*\])", expression) and len(re.match("(\[(-|).*;(-|).*\])", expression).group(0)) == len(expression):
+    if is_polar(expression) and is_polar(expression) == len(expression):
         print expression
         expression_list = expression.strip("[").strip("]").split(";")
         real = math.cos(float(expression_list[1])) * float(expression_list[0])
         imag = math.sin(float(expression_list[1])) * float(expression_list[0]) 
         z = complex(real,imag)
         return to_binomic(z)
-
     return expression
 
+def is_polar(expression):
+    match = re.match(constants.get("REGEX_POLAR"), expression)
+    if match:
+        return len(match.group(0))
+    return 0
+
+def is_binom(expression):
+    match = re.match(constants.get("REGEX_BINOM"), expression)
+    if match:
+        return len(match.group(0))
+    return 0
 
