@@ -27,10 +27,12 @@ class CalcPanel(wx.Panel):
         self.running_total = wx.StaticText(self)
         main_sizer.Add(self.running_total, 0, wx.ALIGN_RIGHT)
 
-        buttons = [['7', '8', '9', '/'],
+        buttons = [[',', '|', '', ''],
+                   ['[', ']', '(', ')'],
+                   ['7', '8', '9', '/'],
                    ['4', '5', '6', '*'],
                    ['1', '2', '3', '-'],
-                   ['.', '0', '', '+']]
+                   ['.', '0', ';', '+']]
         for label_list in buttons:
             btn_sizer = wx.BoxSizer()
             for label in label_list:
@@ -39,10 +41,11 @@ class CalcPanel(wx.Panel):
                 button.Bind(wx.EVT_BUTTON, self.update_equation)
             main_sizer.Add(btn_sizer, 1, wx.ALIGN_CENTER|wx.EXPAND)
 
+
         equals_btn = wx.Button(self, label='=')
         equals_btn.Bind(wx.EVT_BUTTON, self.on_total)
         main_sizer.Add(equals_btn, 0, wx.EXPAND|wx.ALL, 3)
-
+    
         clear_btn = wx.Button(self, label='Clear')
         clear_btn.Bind(wx.EVT_BUTTON, self.on_clear)
         main_sizer.Add(clear_btn, 0, wx.EXPAND|wx.ALL, 3)
@@ -76,10 +79,12 @@ class CalcPanel(wx.Panel):
             current_solution = str(eval(self.solution.GetValue()))
             self.running_total.SetLabel(current_solution)
             self.Layout()
+            # return self.solution.GetValue()
             return current_solution
         except ZeroDivisionError:
             self.solution.SetValue('ZeroDivisionError')
-        except:
+        except Exception, ex:
+            print ex
             pass
 
     def on_clear(self, event):

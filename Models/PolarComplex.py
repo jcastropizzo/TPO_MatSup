@@ -6,8 +6,8 @@ class PolarComplex(object):
         self.module = module
         self.arg = arg
 
-    def print(self):
-        return '' + self.module + 'arg(' + self.arg + ')'
+    # def print(self):
+    #     return '' + self.module + 'arg(' + self.arg + ')'
 
     @property
     def real(self):

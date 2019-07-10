@@ -6,8 +6,8 @@ class BinomicComplex(object):
         self.real = real
         self.imaginary = imaginary
 
-    def print(self):
-        return '', self.real, '+i', self.imaginary
+    # def print(self):
+    #     return '', self.real, '+i', self.imaginary
 
     @property
     def arg(self):
