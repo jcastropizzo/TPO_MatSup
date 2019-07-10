@@ -1,5 +1,8 @@
-from UI import constants as cfg 
+from UI import constants as cfg
+from UI import graphicate as graph
+from UI.complex_tools import *
 import wx
+
 
 class CalcPanel(wx.Panel):
 
@@ -13,9 +16,6 @@ class CalcPanel(wx.Panel):
         font = wx.Font(12, wx.MODERN, wx.NORMAL, wx.NORMAL)
 
 
-        # dc = wx.PaintDC(self)
-        # gc = wx.GraphicsContext.Create(dc)
-        # main_sizer.Add(self.gc, 0, wx.EXPAND|wx.ALL, 5)
 
 
         self.solution = wx.TextCtrl(self, style=wx.TE_RIGHT)
@@ -27,14 +27,15 @@ class CalcPanel(wx.Panel):
         self.running_total = wx.StaticText(self)
         main_sizer.Add(self.running_total, 0, wx.ALIGN_RIGHT)
 
-        buttons = [[',', '|', '', ''],
+        
+        buttons = [['^', ';', ',', 'Del'],
                    ['[', ']', '(', ')'],
                    ['7', '8', '9', '/'],
                    ['4', '5', '6', '*'],
                    ['1', '2', '3', '-'],
-                   ['.', '0', ';', '+']]
+                   ['.', '0', '@', '+']]
         for label_list in buttons:
-            btn_sizer = wx.BoxSizer()
+            btn_sizer = wx.BoxSizer() 
             for label in label_list:
                 button = wx.Button(self, label=label)
                 btn_sizer.Add(button, 1, wx.ALIGN_CENTER|wx.EXPAND, 0)
@@ -50,7 +51,7 @@ class CalcPanel(wx.Panel):
         clear_btn.Bind(wx.EVT_BUTTON, self.on_clear)
         main_sizer.Add(clear_btn, 0, wx.EXPAND|wx.ALL, 3)
 
-        self.SetSizer(main_sizer)
+        self.SetSizer(main_sizer, wx.EXPAND)
 
     def update_equation(self, event):
         operators = ['/', '*', '-', '+']
@@ -66,26 +67,29 @@ class CalcPanel(wx.Panel):
         elif label in operators and current_equation != '' \
              and self.last_button_pressed not in operators:
             self.solution.SetValue(current_equation + ' ' + label)
+        if label == "Del":
+            self.solution.SetValue(current_equation[:-1])
+        if label == "@":
+            self.solution.SetValue(toggle(current_equation))
 
         self.last_button_pressed = label
 
-        for item in operators:
-            if item in self.solution.GetValue():
-                self.update_solution()
-                break
+        # for item in operators:
+        #     if item in self.solution.GetValue():
+        #         self.update_solution()
+        #         break
 
     def update_solution(self):
         try:
-            current_solution = str(eval(self.solution.GetValue()))
+            # current_solution = str(eval(self.solution.GetValue()))
+            current_solution = to_binomic(complex_eval(self.solution.GetValue()))
+
             self.running_total.SetLabel(current_solution)
             self.Layout()
-            # return self.solution.GetValue()
             return current_solution
         except ZeroDivisionError:
             self.solution.SetValue('ZeroDivisionError')
-        except Exception, ex:
-            print ex
-            pass
+        
 
     def on_clear(self, event):
         self.solution.Clear()
@@ -96,6 +100,7 @@ class CalcPanel(wx.Panel):
         if solution:
             self.solution.SetValue(solution)
             self.running_total.SetLabel('')
+
 
 class CalcFrame(wx.Frame):
 
