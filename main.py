@@ -4,7 +4,7 @@ import math
 # from  Models import BinomicComplex
 import matplotlib.pyplot as plt
 import numpy as np
-
+import re
 def graphicate(z):
     try:
         X = np.array((0))
@@ -18,9 +18,9 @@ def graphicate(z):
         plt.grid()
         plt.autoscale(enable=True, axis='y')
         ax.set_aspect('equal')
-
-        plt.xlim(-5,5)
-        plt.ylim(-5,5)
+        scale = 1.5
+        plt.xlim(-abs(z.imag * scale),abs(z.imag * scale))
+        plt.ylim(-abs(z.real * scale),abs(z.real * scale))
 
         plt.title('({};{})'.format(str(z.real),str(z.imag)),fontsize=10)
         plt.show()
@@ -44,38 +44,33 @@ def pow(z, p):
         
     
 
-def complex_eval(expression = "(3,5)"):
+def complex_eval(expression = "(1,2)+(4,6)"):
     expression = expression.replace(" ", "")
     expression = expression.replace(";", ",")
-    first_split = ""
-    pass
 
 
-
-def string_to_complex(expression="(3,4)" ):
-    expression = expression.replace(" ", "")
-    expression = expression.replace(";", ",")
-    evaluated  = eval(expression)
-
-    if "(" in expression:        
-        # expression  = evaluated[0] + evaluated[1] + "j"
-        return complex(evaluated) 
-
-    if "[" in expression:
-        return string_to_complex(polar_to_binomic(expression))
+    for bincomplex in re.findall("(.\d*.,.\d*.)", expression):
+        print bincomplex
+        bincomplex_str =bincomplex.strip("(").strip(")")
+        bincomplex = bincomplex_str.split(",")
         
-    return ""
+        expression = expression.replace(bincomplex_str, "({}+{}j)".format(bincomplex[0],bincomplex[1] ))
 
-def polar_to_binomic(expression = "[1,2]"):
-    evaluated  = eval(expression)
-    return "(" + str(math.cos(evaluated[1]) * evaluated[0]) + "," + str(math.sin(evaluated[1]) * evaluated[0]) + ")"
+    # for polcomplex in re.findall("[.\d*.,.\d*.]", expression):
+    #     print polcomplex
+    #     polcomplex_str = polcomplex.strip("[").strip("]")
+    #     polcomplex = polcomplex_str.split(",")
+    #     real = math.cos(polcomplex[1]) * polcomplex[0]
+    #     imag = math.sin(polcomplex[1]) * polcomplex[0]
+    #     expression = expression.replace(polcomplex_str, "({}+{})".format(real,imag ))
+    
+    return eval(expression)
+
 
 
 if __name__ == "__main__":
     # menu.start()
     # menu.init()
-    # print string_to_complex()
-    # z = PolarComplex.__init__(2, 3)
-    # print z
-    graphicate(complex(3,4))
+    print complex_eval()
+    # graphicate(complex(3,4))
     exit(0)
